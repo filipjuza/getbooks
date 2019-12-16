@@ -4,7 +4,7 @@ module.exports = {
         es6: true,
         node: true
     },
-    extends: ['airbnb-base', 'plugin:node/recommended'],
+    extends: ['airbnb-base', 'plugin:node/recommended', 'plugin:prettier/recommended'],
     globals: {
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly'
@@ -13,10 +13,6 @@ module.exports = {
         ecmaVersion: 2018
     },
     rules: {
-        indent: ['warn', 4, { SwitchCase: 1 }],
-        'max-len': ['warn', 140],
-        quotes: ['error', 'single', { allowTemplateLiterals: true }],
-        'comma-dangle': ['error', 'never'],
         'no-unused-vars': ['warn'],
         'no-console': 'off'
     }

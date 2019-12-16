@@ -1,1 +1,2 @@
-bin
+!.eslintrc.js
+!.prettierrc.js
