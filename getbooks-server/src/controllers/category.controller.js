@@ -9,6 +9,7 @@ const getAll = async (req, res, next) => {
 
         res.json(categories);
     } catch (err) {
+        console.log('**** error ***', err);
         next(err);
     }
 };
@@ -16,6 +17,20 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
     try {
         const category = await CategoryModel.findById(req.params.id);
+
+        if (!category) {
+            res.status(404).send('Category was not found.');
+        } else {
+            res.json(category);
+        }
+    } catch (err) {
+        next(err);
+    }
+};
+
+const getBySlug = async (req, res, next) => {
+    try {
+        const category = await CategoryModel.find({ slug: req.body.slug });
 
         if (!category) {
             res.status(404).send('Category was not found.');
@@ -69,11 +84,7 @@ const bootstrap = async () => {
 // Routes
 router.get('/', getAll);
 router.get('/:id', getById);
+router.get('/slug/:slug', getBySlug);
 router.post('/', create);
 
-module.exports = {
-    getAll,
-    getById,
-    create,
-    bootstrap
-};
+module.exports = router;

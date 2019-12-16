@@ -10,6 +10,7 @@ const errorHandler = require('./helpers/error-handler');
 const utils = require('./helpers/utils');
 
 // Controllers
+const categoryController = require('./controllers/category.controller');
 
 const port = utils.normalizePort(process.env.PORT || '4000');
 const databaseUrl = process.env.MONGO_URL || 'mongodb://localhost/getbooks';
@@ -35,11 +36,14 @@ app.use((req, res, next) => {
     }
 });
 
+// Routes
+app.use('/api/category', categoryController);
+
+// Redirect non-api routes to React Router
+app.get('/*', (req, res) => res.sendFile(path.join(buildPath, 'index.html')));
+
 // Global error handling
 app.use(errorHandler);
-
-// Routes
-app.get('/*', (req, res) => res.sendFile(path.join(buildPath, 'index.html')));
 
 // DB connection & server startup
 mongoose
