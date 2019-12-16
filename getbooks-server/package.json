@@ -1,0 +1,31 @@
+{
+    "name": "getbooks-server",
+    "version": "1.0.0",
+    "main": "src/app.js",
+    "description": "Getbooks server",
+    "author": "Filip Juza (filip.juza@gmail.com, eaafiju@students.eaaa.dk)",
+    "license": "ISC",
+    "scripts": {
+        "start": "node src/app.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "cookie-parser": "~1.4.4",
+        "cors": "^2.8.5",
+        "debug": "~2.6.9",
+        "express": "~4.16.1",
+        "express-jwt": "^5.3.1",
+        "mongoose": "^5.7.7",
+        "morgan": "~1.9.1"
+    },
+    "devDependencies": {
+        "eslint": "^6.6.0",
+        "eslint-config-airbnb-base": "^14.0.0",
+        "eslint-plugin-import": "^2.18.2",
+        "eslint-plugin-node": "^10.0.0"
+    },
+    "engines": {
+        "node": "12.13.0",
+        "npm": "6.12.0"
+    }
+}

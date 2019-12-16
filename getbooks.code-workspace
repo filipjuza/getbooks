@@ -1,0 +1,11 @@
+{
+  "folders": [
+	{
+		"path": "getbooks-client"
+	},
+	{
+		"path": "getbooks-server"
+	}
+],
+  "settings": {}
+}
