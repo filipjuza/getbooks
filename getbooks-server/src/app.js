@@ -1,21 +1,18 @@
+// Application imports
 const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-// Custom modules
-const utils = require('./utils');
+// Custom middleware & utilities
+const errorHandler = require('./helpers/error-handler');
+const utils = require('./helpers/utils');
 
-/**
- * Routes are defined in separate files in the `/routes` directory for better organization. Ideally, the `questionRouter` woul be split
- * in two (`questionRouter`, `answerRouter`). The idea is to have one router per resource (so for example `user` would get it's own
- * `userRouter`)
- */
-const questionRouter = require('./routes/question');
+// Controllers
 
 const port = utils.normalizePort(process.env.PORT || '4000');
-const databaseUrl = process.env.MONGO_URL || 'mongodb://localhost/undefined_io';
+const databaseUrl = process.env.MONGO_URL || 'mongodb://localhost/getbooks';
 const buildPath = path.resolve(__dirname, '..', '..', 'client', 'build');
 const app = express();
 
@@ -25,37 +22,31 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(buildPath));
 
+// CORS setup
 app.use((req, res, next) => {
-    // Additional headers for the response to avoid trigger CORS security errors in the browser
-    // Read more: https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 
-    // Intercepts OPTIONS method
-    if ('OPTIONS' === req.method) {
-        // Always respond with 200
-        console.log('Allowing OPTIONS');
+    if (req.method === 'OPTIONS') {
         res.send(200);
     } else {
         next();
     }
 });
 
-// Question & Answer routes
-app.use('/api/question', questionRouter);
+// Global error handling
+app.use(errorHandler);
 
-/**
- * Let non-api requests be handled by Reach router
- */
+// Routes
 app.get('/*', (req, res) => res.sendFile(path.join(buildPath, 'index.html')));
 
-// Yoinked from https://github.com/kdorland/kittens_mern/blob/master/server/app.js
+// DB connection & server startup
 mongoose
     .connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(async () => {
         app.listen(port);
 
-        console.log(`undefined.io server running on port ${port}`);
+        console.log(`getbooks-server running on port ${port}`);
     })
-    .catch((error) => console.error(error));
+    .catch(error => console.error(error));

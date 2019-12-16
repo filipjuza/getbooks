@@ -1,12 +1,8 @@
 const express = require('express');
-
-const router = express.Router();
-
-/**
- * Mongoose models are defined in the `models` directory
- */
 const QuestionModel = require('../models/question.model');
 const AnswerModel = require('../models/answer.model');
+
+const router = express.Router();
 
 /**
  * Get all questions
