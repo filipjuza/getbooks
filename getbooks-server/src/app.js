@@ -13,14 +13,15 @@ const errorHandler = require('./helpers/error-handler');
 // Controllers
 const categoryController = require('./controllers/category.controller');
 const userController = require('./controllers/user.controller');
+const bookController = require('./controllers/book.controller');
 
 const buildPath = path.resolve(__dirname, '..', '..', 'client', 'build');
 const publicRoutes = [
     /^(?!\/api).*/gim,
     '/api/user/authenticate',
     '/api/user/create',
-    { url: '/api/category', methods: ['GET'] },
-    { url: '/api/book', methods: ['GET'] }
+    { url: /^(\/api\/category).*/gim, methods: ['GET'] },
+    { url: /^(\/api\/book).*/gim, methods: ['GET'] }
 ];
 const app = express();
 
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/category', categoryController);
 app.use('/api/user', userController);
+app.use('/api/book', bookController);
 
 // Global error handling
 app.use(errorHandler);

@@ -29,7 +29,7 @@ const getById = async (req, res, next) => {
 
 const getBySlug = async (req, res, next) => {
     try {
-        const category = await CategoryModel.find({ slug: req.body.slug });
+        const category = await CategoryModel.findOne({ slug: req.body.slug });
 
         if (!category) {
             res.status(404).send('Category was not found');
@@ -43,9 +43,10 @@ const getBySlug = async (req, res, next) => {
 
 const create = async (req, res, next) => {
     try {
+        const { name, slug } = req.body;
         const category = new CategoryModel({
-            name: req.body.name,
-            slug: req.body.slug
+            name,
+            slug
         });
 
         res.json(await category.save());
