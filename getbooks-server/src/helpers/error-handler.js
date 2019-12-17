@@ -1,10 +1,11 @@
-function errorHandler(err, req, res) {
+function errorHandler(err, req, res, next) {
+    console.log('error handler kicked in');
     if (err.name === 'CastError') {
-        res.status(404).send('Question was not found.');
+        return res.status(404).send('Not found');
     }
 
     if (err.name === 'UnauthorizedError') {
-        return res.status(401).json({ message: 'Invalid Token' });
+        return res.status(401).json({ message: 'Invalid token' });
     }
 
     if (typeof err === 'string') {

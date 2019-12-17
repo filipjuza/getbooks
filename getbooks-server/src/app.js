@@ -11,6 +11,7 @@ const utils = require('./helpers/utils');
 
 // Controllers
 const categoryController = require('./controllers/category.controller');
+const userController = require('./controllers/user.controller');
 
 const port = utils.normalizePort(process.env.PORT || '4000');
 const databaseUrl = process.env.MONGO_URL || 'mongodb://localhost/getbooks';
@@ -38,12 +39,13 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/category', categoryController);
-
-// Redirect non-api routes to React Router
-app.get('/*', (req, res) => res.sendFile(path.join(buildPath, 'index.html')));
+app.use('/api/user', userController);
 
 // Global error handling
 app.use(errorHandler);
+
+// Redirect non-api routes to React Router
+app.get('/*', (req, res) => res.sendFile(path.join(buildPath, 'index.html')));
 
 // DB connection & server startup
 mongoose

@@ -9,7 +9,6 @@ const getAll = async (req, res, next) => {
 
         res.json(categories);
     } catch (err) {
-        console.log('**** error ***', err);
         next(err);
     }
 };
@@ -19,7 +18,7 @@ const getById = async (req, res, next) => {
         const category = await CategoryModel.findById(req.params.id);
 
         if (!category) {
-            res.status(404).send('Category was not found.');
+            res.status(404).send('Category was not found');
         } else {
             res.json(category);
         }
@@ -33,7 +32,7 @@ const getBySlug = async (req, res, next) => {
         const category = await CategoryModel.find({ slug: req.body.slug });
 
         if (!category) {
-            res.status(404).send('Category was not found.');
+            res.status(404).send('Category was not found');
         } else {
             res.json(category);
         }
