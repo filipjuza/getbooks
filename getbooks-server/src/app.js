@@ -4,18 +4,24 @@ const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const expressJWT = require('express-jwt');
 
 // Custom middleware & utilities
+const { DATABASE_URL, SERVER_PORT, JWT_SECRET } = require('./helpers/environment-variables');
 const errorHandler = require('./helpers/error-handler');
-const utils = require('./helpers/utils');
 
 // Controllers
 const categoryController = require('./controllers/category.controller');
 const userController = require('./controllers/user.controller');
 
-const port = utils.normalizePort(process.env.PORT || '4000');
-const databaseUrl = process.env.MONGO_URL || 'mongodb://localhost/getbooks';
 const buildPath = path.resolve(__dirname, '..', '..', 'client', 'build');
+const publicRoutes = [
+    /^(?!\/api).*/gim,
+    '/api/user/authenticate',
+    '/api/user/create',
+    { url: '/api/category', methods: ['GET'] },
+    { url: '/api/book', methods: ['GET'] }
+];
 const app = express();
 
 app.use(cors());
@@ -23,6 +29,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(buildPath));
+app.use(expressJWT({ secret: JWT_SECRET }).unless({ path: publicRoutes }));
 
 // CORS setup
 app.use((req, res, next) => {
@@ -49,10 +56,10 @@ app.get('/*', (req, res) => res.sendFile(path.join(buildPath, 'index.html')));
 
 // DB connection & server startup
 mongoose
-    .connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(async () => {
-        app.listen(port);
+        app.listen(SERVER_PORT);
 
-        console.log(`getbooks-server running on port ${port}`);
+        console.log(`getbooks-server running on port ${SERVER_PORT}`);
     })
     .catch(error => console.error(error));
