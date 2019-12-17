@@ -30,7 +30,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(buildPath));
-app.use(expressJWT({ secret: JWT_SECRET }).unless({ path: publicRoutes }));
+// app.use(expressJWT({ secret: JWT_SECRET }).unless({ path: publicRoutes }));
 
 // CORS setup
 app.use((req, res, next) => {

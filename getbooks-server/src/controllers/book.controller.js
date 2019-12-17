@@ -6,7 +6,7 @@ const router = express.Router();
 const getAll = async (req, res, next) => {
     try {
         const books = await BookModel.find({})
-            .populate('user')
+            .populate('user', '-password -role')
             .populate('category');
 
         res.json(books);
@@ -18,7 +18,7 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
     try {
         const book = await BookModel.findById(req.params.id)
-            .populate('user')
+            .populate('user', '-password -role')
             .populate('category');
 
         if (!book) {
@@ -34,7 +34,7 @@ const getById = async (req, res, next) => {
 const getBySlug = async (req, res, next) => {
     try {
         const book = await BookModel.findOne({ slug: req.body.slug })
-            .populate('user')
+            .populate('user', '-password -role')
             .populate('category');
 
         if (!book) {
