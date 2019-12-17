@@ -1,5 +1,5 @@
 function errorHandler(err, req, res, next) {
-    console.log('error handler kicked in');
+    console.log('***** Error handler kicked in *****');
     if (err.name === 'CastError') {
         return res.status(404).send('Not found');
     }
