@@ -1,0 +1,122 @@
+const bcrypt = require('bcryptjs');
+const UserModel = require('../models/user.model');
+const CategoryModel = require('../models/category.model');
+const BookModel = require('../models/book.model');
+const Role = require('../helpers/role');
+
+const bootstrapUsers = async () => {
+    const promises = [];
+    const users = [
+        {
+            username: 'filip',
+            email: 'filip.juza@gmail.com',
+            password: 'shrek'
+        },
+        {
+            username: 'admin',
+            email: 'filip.juza1@gmail.com',
+            password: 'admin',
+            role: Role.Admin
+        },
+        {
+            username: 'Marc88',
+            email: 'filip.juza2@gmail.com',
+            password: 'fortnite'
+        }
+    ];
+
+    users.forEach(user => {
+        const hash = bcrypt.hashSync(user.password, 10);
+
+        const newUser = new UserModel({
+            username: user.username,
+            email: user.email,
+            password: hash,
+            role: user.role || Role.User
+        });
+
+        promises.push(newUser.save());
+    });
+
+    return Promise.all(promises);
+};
+
+const bootstrapCategories = async () => {
+    const promises = [];
+    const categories = [
+        {
+            name: 'Javascript',
+            slug: 'javascript'
+        },
+        {
+            name: 'Marketing',
+            slug: 'marketing'
+        },
+        {
+            name: 'Philosophy',
+            slug: 'philosophy'
+        }
+    ];
+
+    categories.forEach(category => {
+        const newCategory = new CategoryModel({
+            name: category.name,
+            slug: category.slug
+        });
+
+        promises.push(newCategory.save());
+    });
+
+    return Promise.all(promises);
+};
+
+const bootstrapBooks = async (users, categories) => {
+    const promises = [];
+    const books = [
+        {
+            title: `You don't know JS`,
+            author: 'Some Dude',
+            price: '399',
+            slug: 'you-dont-know-js',
+            user: users[0].id,
+            category: categories[0].id
+        },
+        {
+            title: `Free real estate`,
+            author: 'Hick Dertz',
+            price: '69',
+            slug: 'free-real-estate',
+            user: users[0].id,
+            category: categories[1].id
+        },
+        {
+            title: `Top 100 frameworks in 2020`,
+            author: 'Guy Designer',
+            price: '420',
+            slug: 'top-100-frameworks-2020',
+            user: users[1].id,
+            category: categories[0].id
+        }
+    ];
+
+    books.forEach(book => {
+        const newBook = new BookModel({
+            title: book.title,
+            author: book.author,
+            price: book.price,
+            slug: book.slug,
+            user: book.user,
+            category: book.category
+        });
+
+        promises.push(newBook.save());
+    });
+
+    return Promise.all(promises);
+};
+
+module.exports = {
+    bootstrapUsers,
+    bootstrapCategories,
+    bootstrapBooks
+};

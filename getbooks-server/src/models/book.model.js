@@ -8,6 +8,7 @@ const BookSchema = new Schema({
     author: String,
     price: Number,
     slug: String,
+    image: String,
     user: { type: ObjectId, ref: 'User' },
     category: { type: ObjectId, ref: 'Category' }
 });

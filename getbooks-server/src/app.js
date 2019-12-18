@@ -9,6 +9,8 @@ const expressJwt = require('express-jwt');
 // Custom middleware & utilities
 const { DATABASE_URL, SERVER_PORT, JWT_SECRET } = require('./helpers/environment-variables');
 const errorHandler = require('./helpers/error-handler');
+const bootstrap = require('./helpers/bootstrap');
+const UserModel = require('./models/user.model');
 
 // Controllers
 const categoryController = require('./controllers/category.controller');
@@ -60,6 +62,15 @@ app.get('/*', (req, res) => res.sendFile(path.join(buildPath, 'index.html')));
 mongoose
     .connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(async () => {
+        const existingUsers = await UserModel.find({});
+
+        if (!existingUsers.length) {
+            const users = await bootstrap.bootstrapUsers();
+            const categories = await bootstrap.bootstrapCategories();
+
+            await bootstrap.bootstrapBooks(users, categories);
+        }
+
         app.listen(SERVER_PORT);
 
         console.log(`getbooks-server running on port ${SERVER_PORT}`);
