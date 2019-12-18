@@ -7,9 +7,9 @@ const getAll = async (req, res, next) => {
     try {
         const categories = await CategoryModel.find({});
 
-        res.json(categories);
+        return res.json(categories);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -18,26 +18,26 @@ const getById = async (req, res, next) => {
         const category = await CategoryModel.findById(req.params.id);
 
         if (!category) {
-            res.status(404).send('Category was not found');
-        } else {
-            res.json(category);
+            return res.status(404).send('Category was not found');
         }
+
+        return res.json(category);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
 const getBySlug = async (req, res, next) => {
     try {
-        const category = await CategoryModel.findOne({ slug: req.body.slug });
+        const category = await CategoryModel.findOne({ slug: req.params.slug });
 
         if (!category) {
-            res.status(404).send('Category was not found');
-        } else {
-            res.json(category);
+            return res.status(404).send('Category was not found');
         }
+
+        return res.json(category);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -48,8 +48,7 @@ const create = async (req, res, next) => {
         const existingSlug = await CategoryModel.findOne({ slug });
 
         if (existingSlug) {
-            res.status(400).send('Slug is already in use');
-            return;
+            return res.status(400).send('Slug is already in use');
         }
 
         const category = new CategoryModel({
@@ -57,9 +56,9 @@ const create = async (req, res, next) => {
             slug
         });
 
-        res.json(await category.save());
+        return res.json(await category.save());
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -90,9 +89,9 @@ const bootstrap = async () => {
 };
 
 // Routes
-router.get('/', getAll);
-router.get('/:id', getById);
 router.get('/slug/:slug', getBySlug);
+router.get('/:id', getById);
+router.get('/', getAll);
 router.post('/', create);
 
 module.exports = router;

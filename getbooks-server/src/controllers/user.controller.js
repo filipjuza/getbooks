@@ -16,9 +16,9 @@ const getAll = async (req, res, next) => {
             }
         );
 
-        res.json(users);
+        return res.json(users);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -29,12 +29,11 @@ const getById = async (req, res, next) => {
         });
 
         if (!user) {
-            res.status(404).send('User was not found.');
-        } else {
-            res.json(user);
+            return res.status(404).send('User was not found.');
         }
+        return res.json(user);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -43,9 +42,7 @@ const create = async (req, res, next) => {
         const { username, email, password } = req.body;
 
         if (!username || !email || !password) {
-            res.status(400).send('Username, email, or password was not specified');
-
-            return;
+            return res.status(400).send('Username, email, or password was not specified');
         }
 
         const existingUsers = await UserModel.find(
@@ -66,50 +63,52 @@ const create = async (req, res, next) => {
 
         if (existingUsers.length) {
             if (existingUsers.some(u => u.username === username)) {
-                res.status(400).send('Username not available');
-            } else if (existingUsers.some(u => u.email === email)) {
-                res.status(400).send('Email already in use');
+                return res.status(400).send('Username not available');
             }
-        } else {
-            bcrypt.hash(password, 10, async (err, hash) => {
-                const newUser = new UserModel({
-                    username,
-                    email,
-                    password: hash,
-                    role: Role.User
-                });
-                const savedUser = await newUser.save();
 
-                res.json({
-                    username: savedUser.username,
-                    email: savedUser.email,
-                    role: savedUser.role
-                });
-            });
+            if (existingUsers.some(u => u.email === email)) {
+                return res.status(400).send('Email already in use');
+            }
         }
+
+        return bcrypt.hash(password, 10, async (err, hash) => {
+            if (err) {
+                return next(err);
+            }
+
+            const newUser = new UserModel({
+                username,
+                email,
+                password: hash,
+                role: Role.User
+            });
+            const savedUser = await newUser.save();
+
+            return res.json({
+                username: savedUser.username,
+                email: savedUser.email,
+                role: savedUser.role
+            });
+        });
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
-const authenticate = async (req, res, next) => {
+const authenticate = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        res.status(400).send('Email or password was not specified');
-
-        return;
+        return res.status(400).send('Email or password was not specified');
     }
 
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-        res.status(404).send('User not found');
-
-        return;
+        return res.status(404).send('User not found');
     }
 
-    bcrypt.compare(password, user.password, (err, success) => {
+    return bcrypt.compare(password, user.password, (err, success) => {
         if (success) {
             const token = jwt.sign(
                 {
@@ -123,10 +122,10 @@ const authenticate = async (req, res, next) => {
                 }
             );
 
-            res.json({ token });
-        } else {
-            res.status(401).send('Invalid credentials');
+            return res.json({ token });
         }
+
+        return res.status(401).send('Invalid credentials');
     });
 };
 

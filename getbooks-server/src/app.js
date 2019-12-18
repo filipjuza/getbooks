@@ -4,7 +4,7 @@ const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const expressJWT = require('express-jwt');
+const expressJwt = require('express-jwt');
 
 // Custom middleware & utilities
 const { DATABASE_URL, SERVER_PORT, JWT_SECRET } = require('./helpers/environment-variables');
@@ -16,13 +16,13 @@ const userController = require('./controllers/user.controller');
 const bookController = require('./controllers/book.controller');
 
 const buildPath = path.resolve(__dirname, '..', '..', 'client', 'build');
-const publicRoutes = [
-    /^(?!\/api).*/gim,
-    '/api/user/authenticate',
-    '/api/user/create',
-    { url: /^(\/api\/category).*/gim, methods: ['GET'] },
-    { url: /^(\/api\/book).*/gim, methods: ['GET'] }
-];
+// const publicRoutes = [
+//     /^(?!\/api).*/gim,
+//     '/api/user/authenticate',
+//     '/api/user/create',
+//     { url: /^(\/api\/category).*/gim, methods: ['GET'] },
+//     { url: /^(\/api\/book).*/gim, methods: ['GET'] }
+// ];
 const app = express();
 
 app.use(cors());
@@ -30,7 +30,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(buildPath));
-// app.use(expressJWT({ secret: JWT_SECRET }).unless({ path: publicRoutes }));
+// app.use(expressJwt({ secret: JWT_SECRET }).unless({ path: publicRoutes }));
 
 // CORS setup
 app.use((req, res, next) => {

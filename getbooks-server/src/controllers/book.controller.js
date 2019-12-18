@@ -11,9 +11,9 @@ const getAll = async (req, res, next) => {
             .populate('user', '-password -role')
             .populate('category');
 
-        res.json(books);
+        return res.json(books);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -24,28 +24,28 @@ const getById = async (req, res, next) => {
             .populate('category');
 
         if (!book) {
-            res.status(404).send('Book was not found');
-        } else {
-            res.json(book);
+            return res.status(404).send('Book was not found');
         }
+
+        return res.json(book);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
 const getBySlug = async (req, res, next) => {
     try {
-        const book = await BookModel.findOne({ slug: req.body.slug })
+        const book = await BookModel.findOne({ slug: req.params.slug })
             .populate('user', '-password -role')
             .populate('category');
 
         if (!book) {
-            res.status(404).send('Book was not found');
-        } else {
-            res.json(book);
+            return res.status(404).send('Book was not found');
         }
+
+        return res.json(book);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -62,19 +62,16 @@ const create = async (req, res, next) => {
         ]);
 
         if (existingSlug) {
-            res.status(400).send('Slug is already in use');
-            return;
+            return res.status(400).send('Slug is already in use');
         }
 
         // TODO: Get user ID from JWT
         if (!existingUser) {
-            res.status(404).send(`The specified user doesn't exist`);
-            return;
+            return res.status(404).send(`The specified user doesn't exist`);
         }
 
         if (!existingCategory) {
-            res.status(404).send(`The specified category doesn't exist`);
-            return;
+            return res.status(404).send(`The specified category doesn't exist`);
         }
 
         const book = new BookModel({
@@ -86,9 +83,9 @@ const create = async (req, res, next) => {
             category
         });
 
-        res.json(await book.save());
+        return res.json(await book.save());
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
