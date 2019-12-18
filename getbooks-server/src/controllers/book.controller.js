@@ -1,5 +1,7 @@
 const express = require('express');
 const BookModel = require('../models/book.model');
+const CategoryModel = require('../models/category.model');
+const UserModel = require('../models/user.model');
 
 const router = express.Router();
 
@@ -49,7 +51,26 @@ const getBySlug = async (req, res, next) => {
 
 const create = async (req, res, next) => {
     try {
+        // TODO: Get user ID from JWT
         const { title, author, price, slug, user, category } = req.body;
+
+        // Using Promise.all() to run the async DB calls concurrently
+        const [existingUser, existingCategory] = await Promise.all([
+            UserModel.findById(user, { password: 0 }),
+            CategoryModel.findById(category)
+        ]);
+
+        // TODO: Get user ID from JWT
+        if (!existingUser) {
+            res.status(404).send(`The specified user doesn't exist`);
+            return;
+        }
+
+        if (!existingCategory) {
+            res.status(404).send(`The specified category doesn't exist`);
+            return;
+        }
+
         const book = new BookModel({
             title,
             author,
