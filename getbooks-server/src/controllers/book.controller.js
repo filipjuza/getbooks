@@ -52,7 +52,7 @@ const getBySlug = async (req, res, next) => {
 const create = async (req, res, next) => {
     try {
         // TODO: Get user ID from JWT
-        const { title, author, price, slug, user, category } = req.body;
+        const { title, author, price, slug, image, user, category } = req.body;
 
         // Using Promise.all() to run the async DB calls concurrently
         const [existingUser, existingCategory, existingSlug] = await Promise.all([
@@ -79,6 +79,7 @@ const create = async (req, res, next) => {
             author,
             price,
             slug,
+            image,
             user,
             category
         });

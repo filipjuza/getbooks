@@ -78,6 +78,7 @@ const bootstrapBooks = async (users, categories) => {
             author: 'Some Dude',
             price: '399',
             slug: 'you-dont-know-js',
+            image: `https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260`,
             user: users[0].id,
             category: categories[0].id
         },
@@ -86,6 +87,7 @@ const bootstrapBooks = async (users, categories) => {
             author: 'Hick Dertz',
             price: '69',
             slug: 'free-real-estate',
+            image: `https://images.pexels.com/photos/5834/nature-grass-leaf-green.jpg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260`,
             user: users[0].id,
             category: categories[1].id
         },
@@ -94,6 +96,7 @@ const bootstrapBooks = async (users, categories) => {
             author: 'Guy Designer',
             price: '420',
             slug: 'top-100-frameworks-2020',
+            image: `https://images.pexels.com/photos/762687/pexels-photo-762687.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260`,
             user: users[1].id,
             category: categories[0].id
         }
@@ -105,6 +108,7 @@ const bootstrapBooks = async (users, categories) => {
             author: book.author,
             price: book.price,
             slug: book.slug,
+            image: book.image,
             user: book.user,
             category: book.category
         });
