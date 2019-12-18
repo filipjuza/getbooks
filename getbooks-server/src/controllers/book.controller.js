@@ -55,10 +55,16 @@ const create = async (req, res, next) => {
         const { title, author, price, slug, user, category } = req.body;
 
         // Using Promise.all() to run the async DB calls concurrently
-        const [existingUser, existingCategory] = await Promise.all([
+        const [existingUser, existingCategory, existingSlug] = await Promise.all([
             UserModel.findById(user, { password: 0 }),
-            CategoryModel.findById(category)
+            CategoryModel.findById(category),
+            BookModel.findOne({ slug })
         ]);
+
+        if (existingSlug) {
+            res.status(400).send('Slug is already in use');
+            return;
+        }
 
         // TODO: Get user ID from JWT
         if (!existingUser) {

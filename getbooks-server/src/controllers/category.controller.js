@@ -44,6 +44,14 @@ const getBySlug = async (req, res, next) => {
 const create = async (req, res, next) => {
     try {
         const { name, slug } = req.body;
+
+        const existingSlug = await CategoryModel.findOne({ slug });
+
+        if (existingSlug) {
+            res.status(400).send('Slug is already in use');
+            return;
+        }
+
         const category = new CategoryModel({
             name,
             slug
