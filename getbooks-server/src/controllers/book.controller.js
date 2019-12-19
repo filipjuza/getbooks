@@ -5,6 +5,12 @@ const UserModel = require('../models/user.model');
 
 const router = express.Router();
 
+/**
+ * Get all books
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const getAll = async (req, res, next) => {
     try {
         const books = await BookModel.find({})
@@ -17,6 +23,12 @@ const getAll = async (req, res, next) => {
     }
 };
 
+/**
+ * Get book by ID
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const getById = async (req, res, next) => {
     try {
         const book = await BookModel.findById(req.params.id)
@@ -33,6 +45,12 @@ const getById = async (req, res, next) => {
     }
 };
 
+/**
+ * Get book by slug
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const getBySlug = async (req, res, next) => {
     try {
         const book = await BookModel.findOne({ slug: req.params.slug })
@@ -49,12 +67,20 @@ const getBySlug = async (req, res, next) => {
     }
 };
 
+/**
+ * Create book
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const create = async (req, res, next) => {
     try {
         // TODO: Get user ID from JWT
         const { title, author, price, slug, image, user, category } = req.body;
 
-        // Using Promise.all() to run the async DB calls concurrently
+        /**
+         * Using Promise.all() to run the async DB calls concurrently
+         */
         const [existingUser, existingCategory, existingSlug] = await Promise.all([
             UserModel.findById(user, { password: 0 }),
             CategoryModel.findById(category),
@@ -90,7 +116,9 @@ const create = async (req, res, next) => {
     }
 };
 
-// Routes
+/**
+ * Routes
+ */
 router.get('/slug/:slug', getBySlug);
 router.get('/:id', getById);
 router.get('/', getAll);

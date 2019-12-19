@@ -4,6 +4,9 @@ const CategoryModel = require('../models/category.model');
 const BookModel = require('../models/book.model');
 const Role = require('../helpers/role');
 
+/**
+ * Generate dummy users
+ */
 const bootstrapUsers = async () => {
     const promises = [];
     const users = [
@@ -26,6 +29,9 @@ const bootstrapUsers = async () => {
     ];
 
     users.forEach(user => {
+        /**
+         * Hashing synchronously to avoid race conditions (since books depend on users – see app.js:88)
+         */
         const hash = bcrypt.hashSync(user.password, 10);
 
         const newUser = new UserModel({
@@ -41,6 +47,9 @@ const bootstrapUsers = async () => {
     return Promise.all(promises);
 };
 
+/**
+ * Generate dummy categories
+ */
 const bootstrapCategories = async () => {
     const promises = [];
     const categories = [
@@ -70,6 +79,9 @@ const bootstrapCategories = async () => {
     return Promise.all(promises);
 };
 
+/**
+ * Generate dummy books — dependent on users & categories
+ */
 const bootstrapBooks = async (users, categories) => {
     const promises = [];
     const books = [

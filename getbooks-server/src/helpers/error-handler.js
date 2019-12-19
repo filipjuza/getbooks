@@ -2,6 +2,7 @@
  * Global error-handling middleware.
  * Note that the "next" parameter is required, even if it's not used
  * (express requires this specific signature from error handlers).
+ * https://expressjs.com/en/guide/error-handling.html#writing-error-handlers
  */
 const errorHandler = (err, req, res, next) => {
     console.log('***** Error handler kicked in *****');

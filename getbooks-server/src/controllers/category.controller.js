@@ -3,6 +3,12 @@ const CategoryModel = require('../models/category.model');
 
 const router = express.Router();
 
+/**
+ * Get all categories
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const getAll = async (req, res, next) => {
     try {
         const categories = await CategoryModel.find({});
@@ -13,6 +19,12 @@ const getAll = async (req, res, next) => {
     }
 };
 
+/**
+ * Get category by ID
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const getById = async (req, res, next) => {
     try {
         const category = await CategoryModel.findById(req.params.id);
@@ -27,6 +39,12 @@ const getById = async (req, res, next) => {
     }
 };
 
+/**
+ * Get category by slug
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const getBySlug = async (req, res, next) => {
     try {
         const category = await CategoryModel.findOne({ slug: req.params.slug });
@@ -41,6 +59,12 @@ const getBySlug = async (req, res, next) => {
     }
 };
 
+/**
+ * Create category
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const create = async (req, res, next) => {
     try {
         const { name, slug } = req.body;
@@ -62,33 +86,9 @@ const create = async (req, res, next) => {
     }
 };
 
-const bootstrap = async () => {
-    const categories = [
-        {
-            name: 'Programming',
-            slug: 'programming'
-        },
-        {
-            name: 'Physics',
-            slug: 'physics'
-        },
-        {
-            name: 'Marketing',
-            slug: 'marketing'
-        }
-    ];
-    const promises = [];
-
-    categories.forEach(category => {
-        const newCategory = new CategoryModel(category);
-
-        promises.push(newCategory.create());
-    });
-
-    return Promise.all(promises);
-};
-
-// Routes
+/**
+ * Routes
+ */
 router.get('/slug/:slug', getBySlug);
 router.get('/:id', getById);
 router.get('/', getAll);

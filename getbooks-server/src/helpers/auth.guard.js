@@ -1,7 +1,11 @@
 const expressJwt = require('express-jwt');
 const { JWT_SECRET } = require('../helpers/environment-variables');
 
-function authGuard(roles = []) {
+/**
+ * Inspired by https://jasonwatmore.com/post/2018/11/28/nodejs-role-based-authorization-tutorial-with-example-api
+ * as well as my previous Angular projects https://pastebin.com/rYb1t8nj (Angular AuthGuard)
+ */
+const authGuard = (roles = []) => {
     let permittedRoles = roles;
 
     if (typeof roles === 'string') {
@@ -18,6 +22,6 @@ function authGuard(roles = []) {
             return next();
         }
     ];
-}
+};
 
 module.exports = authGuard;

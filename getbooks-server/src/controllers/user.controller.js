@@ -7,6 +7,12 @@ const Role = require('../helpers/role');
 const router = express.Router();
 const { JWT_SECRET } = require('../helpers/environment-variables');
 
+/**
+ * Get all users (admin only)
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const getAll = async (req, res, next) => {
     try {
         const users = await UserModel.find(
@@ -22,6 +28,12 @@ const getAll = async (req, res, next) => {
     }
 };
 
+/**
+ * Get user by ID (admin only)
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const getById = async (req, res, next) => {
     try {
         const user = await UserModel.findById(req.params.id, {
@@ -37,6 +49,12 @@ const getById = async (req, res, next) => {
     }
 };
 
+/**
+ * Create user (account registration)
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 const create = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
@@ -95,6 +113,12 @@ const create = async (req, res, next) => {
     }
 };
 
+/**
+ * Authenticate user
+ * @param {*} req
+ * @param {*} res
+ * @returns {String} — JWT token
+ */
 const authenticate = async (req, res) => {
     const { email, password } = req.body;
 
@@ -129,7 +153,9 @@ const authenticate = async (req, res) => {
     });
 };
 
-// Routes
+/**
+ * Routes
+ */
 router.get('/', getAll);
 router.get('/:id', getById);
 router.post('/', create);
