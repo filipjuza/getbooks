@@ -4,7 +4,7 @@ module.exports = {
         es6: true,
         jest: true
     },
-    extends: ['airbnb', 'prettier/react', 'plugin:prettier/recommended'],
+    extends: ['react-app', 'airbnb', 'prettier', 'plugin:prettier/recommended'],
     globals: {
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly'
@@ -18,9 +18,8 @@ module.exports = {
     },
     plugins: ['react'],
     rules: {
-        indent: ['warn', 4, { SwitchCase: 1 }],
         'arrow-body-style': ['off'],
-        'max-len': ['warn', 140],
+        'max-len': ['warn', 120],
         'comma-dangle': ['error', 'never'],
         'no-unused-vars': ['warn'],
         'no-underscore-dangle': ['off'],
@@ -28,6 +27,10 @@ module.exports = {
         'react/jsx-indent': ['warn', 4],
         'react/jsx-indent-props': ['warn', 4],
         'react/jsx-filename-extension': ['off'],
-        'jsx-a11y/label-has-associated-control': ['off']
+        'jsx-a11y/label-has-associated-control': ['off'],
+        'func-names': ['off'],
+        // 'react/prop-types': ['off'],
+        'react/destructuring-assignment': ['off'],
+        'import/prefer-default-export': ['off']
     }
 };

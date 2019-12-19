@@ -1,23 +1,56 @@
+/* eslint-disable react/prop-types */
 import './App.scss';
 
-import React from 'react';
+import { Router } from '@reach/router';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import logo from '../../logo.svg';
+import { fetchKittens, postHobby, postKitten } from '../../actions';
+import Categories from '../categories/Categories';
 
-function App() {
-    return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.js</code> and save to reload.
-                </p>
-                <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-                    Learn React
-                </a>
-            </header>
-        </div>
-    );
+// import Kitten from './Kitten';
+// import Kittens from './Kittens';
+
+class App extends Component {
+    constructor(props) {
+        super(props);
+
+        this.API_URL = process.env.REACT_APP_API_URL;
+    }
+
+    componentDidMount() {
+        this.props.fetchKittens().then(() => console.log('Kittens gotten!'));
+    }
+
+    getKitten(id) {
+        return this.props.kittens.find(k => k._id === id);
+    }
+
+    render() {
+        return (
+            <div className="container">
+                <Router>
+                    <Categories path="/" categories={this.props.categories} />
+                    {/* <Kitten
+                        path="/kitten/:id"
+                        getKitten={id => this.getKitten(id)}
+                        addHobby={(kittenId, hobby) => this.props.postHobby(kittenId, hobby)}
+                    /> */}
+                    {/* <Kittens path="/" kittens={this.props.kittens} addKitten={name => this.props.postKitten(name)} /> */}
+                </Router>
+            </div>
+        );
+    }
 }
 
-export default App;
+const mapStatetoProps = state => ({
+    categories: state.kittens
+});
+
+const mapDispatchToProps = dispatch => ({
+    postKitten: name => dispatch(postKitten(name)),
+    postHobby: (kittenId, hobby) => dispatch(postHobby(kittenId, hobby)),
+    fetchKittens: () => dispatch(fetchKittens())
+});
+
+export default connect(mapStatetoProps, mapDispatchToProps)(App);
