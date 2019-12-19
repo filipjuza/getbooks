@@ -1,4 +1,7 @@
-function normalizePort(portNumber) {
+/**
+ * Taken from express-generator https://www.npmjs.com/package/express-generator
+ */
+const normalizePort = portNumber => {
     const port = parseInt(portNumber, 10);
 
     if (Number.isNaN(port)) {
@@ -12,7 +15,7 @@ function normalizePort(portNumber) {
     }
 
     return false;
-}
+};
 
 module.exports = {
     normalizePort

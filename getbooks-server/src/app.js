@@ -1,22 +1,36 @@
+/**
+ * Application imports
+ */
 const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
-
-// Custom modules
-const utils = require('./utils');
+const expressJwt = require('express-jwt');
 
 /**
- * Routes are defined in separate files in the `/routes` directory for better organization. Ideally, the `questionRouter` woul be split
- * in two (`questionRouter`, `answerRouter`). The idea is to have one router per resource (so for example `user` would get it's own
- * `userRouter`)
+ * Custom middleware & utilities
  */
-const questionRouter = require('./routes/question');
+const { DATABASE_URL, SERVER_PORT, JWT_SECRET } = require('./helpers/environment-variables');
+const errorHandler = require('./helpers/error-handler');
+const bootstrap = require('./helpers/bootstrap');
+const UserModel = require('./models/user.model');
 
-const port = utils.normalizePort(process.env.PORT || '4000');
-const databaseUrl = process.env.MONGO_URL || 'mongodb://localhost/undefined_io';
+/**
+ * Controllers
+ */
+const categoryController = require('./controllers/category.controller');
+const userController = require('./controllers/user.controller');
+const bookController = require('./controllers/book.controller');
+
 const buildPath = path.resolve(__dirname, '..', '..', 'client', 'build');
+// const publicRoutes = [
+//     /^(?!\/api).*/gim,
+//     '/api/user/authenticate',
+//     '/api/user/create',
+//     { url: /^(\/api\/category).*/gim, methods: ['GET'] },
+//     { url: /^(\/api\/book).*/gim, methods: ['GET'] }
+// ];
 const app = express();
 
 app.use(cors());
@@ -24,38 +38,61 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(buildPath));
+// app.use(expressJwt({ secret: JWT_SECRET }).unless({ path: publicRoutes }));
 
+/**
+ * CORS setup
+ */
 app.use((req, res, next) => {
-    // Additional headers for the response to avoid trigger CORS security errors in the browser
-    // Read more: https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 
-    // Intercepts OPTIONS method
-    if ('OPTIONS' === req.method) {
-        // Always respond with 200
-        console.log('Allowing OPTIONS');
+    if (req.method === 'OPTIONS') {
         res.send(200);
     } else {
         next();
     }
 });
 
-// Question & Answer routes
-app.use('/api/question', questionRouter);
+/**
+ * Routes
+ */
+app.use('/api/category', categoryController);
+app.use('/api/user', userController);
+app.use('/api/book', bookController);
 
 /**
- * Let non-api requests be handled by Reach router
+ * Global error handling
+ */
+app.use(errorHandler);
+
+/**
+ * Redirect non-api routes to React Router
  */
 app.get('/*', (req, res) => res.sendFile(path.join(buildPath, 'index.html')));
 
-// Yoinked from https://github.com/kdorland/kittens_mern/blob/master/server/app.js
+/**
+ * DB connection & server startup
+ */
 mongoose
-    .connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(async () => {
-        app.listen(port);
+        const existingUsers = await UserModel.find({});
 
-        console.log(`undefined.io server running on port ${port}`);
+        /**
+         * Bootstrap DB if the user collection is empty
+         * Inspired by: https://github.com/kdorland/kitten-mern-redux/blob/master/server/app.js
+         */
+        if (!existingUsers.length) {
+            const users = await bootstrap.bootstrapUsers();
+            const categories = await bootstrap.bootstrapCategories();
+
+            await bootstrap.bootstrapBooks(users, categories);
+        }
+
+        app.listen(SERVER_PORT);
+
+        console.log(`getbooks-server running on port ${SERVER_PORT}`);
     })
-    .catch((error) => console.error(error));
+    .catch(error => console.error(error));
