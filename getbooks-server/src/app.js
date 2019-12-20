@@ -23,7 +23,7 @@ const categoryController = require('./controllers/category.controller');
 const userController = require('./controllers/user.controller');
 const bookController = require('./controllers/book.controller');
 
-const buildPath = path.resolve(__dirname, '..', '..', 'client', 'build');
+const buildPath = path.resolve(__dirname, '..', '..', 'getbooks-client', 'build');
 // const publicRoutes = [
 //     /^(?!\/api).*/gim,
 //     '/api/user/authenticate',
