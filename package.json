@@ -4,7 +4,7 @@
   "description": "Exam Project, Marketplace for used student books, Frameworks course winter 2019, Business Academy Aarhus",
   "private": true,
   "scripts": {
-    "start": "cd getbooks-server && npm start",
+    "start": "cd getbooks-server && node src/app.js",
     "dev": "cd getbooks-client && npm start",
     "test": "cd getbooks-client && npm test",
     "preinstall": "cd getbooks-server && npm install",
