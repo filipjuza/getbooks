@@ -1,24 +1,24 @@
 {
-    "name": "getbooks",
-    "version": "1.0.0",
-    "description": "Exam Project, Marketplace for used student books, Frameworks course winter 2019, Business Academy Aarhus",
-    "private": true,
-    "scripts": {
-        "start": "cd server && npm start",
-        "dev": "cd client && npm start",
-        "test": "cd client && npm test",
-        "preinstall": "cd server && npm install",
-        "install": "cd client && npm install",
-        "build": "cd client && npm run build"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/filipjuza/getbooks.git"
-    },
-    "author": "Filip Juza (filip.juza@gmail.com, eaafiju@students.eaaa.dk)",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/filipjuza/getbooks/issues"
-    },
-    "homepage": "https://github.com/filipjuza/getbooks#readme"
+  "name": "getbooks",
+  "version": "1.0.0",
+  "description": "Exam Project, Marketplace for used student books, Frameworks course winter 2019, Business Academy Aarhus",
+  "private": true,
+  "scripts": {
+    "start": "cd getbooks-server && npm start",
+    "dev": "cd getbooks-client && npm start",
+    "test": "cd getbooks-client && npm test",
+    "preinstall": "cd getbooks-server && npm install",
+    "install": "cd getbooks-client && npm install",
+    "build": "cd getbooks-client && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filipjuza/getbooks.git"
+  },
+  "author": "Filip Juza (filip.juza@gmail.com, eaafiju@students.eaaa.dk)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/filipjuza/getbooks/issues"
+  },
+  "homepage": "https://github.com/filipjuza/getbooks#readme"
 }

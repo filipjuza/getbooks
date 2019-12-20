@@ -1,5 +1,6 @@
 const express = require('express');
 const CategoryModel = require('../models/category.model');
+const BookModel = require('../models/book.model');
 
 const router = express.Router();
 
@@ -20,26 +21,6 @@ const getAll = async (req, res, next) => {
 };
 
 /**
- * Get category by ID
- * @param {*} req
- * @param {*} res
- * @param {*} next
- */
-const getById = async (req, res, next) => {
-    try {
-        const category = await CategoryModel.findById(req.params.id);
-
-        if (!category) {
-            return res.status(404).send('Category was not found');
-        }
-
-        return res.json(category);
-    } catch (err) {
-        return next(err);
-    }
-};
-
-/**
  * Get category by slug
  * @param {*} req
  * @param {*} res
@@ -48,6 +29,7 @@ const getById = async (req, res, next) => {
 const getBySlug = async (req, res, next) => {
     try {
         const category = await CategoryModel.findOne({ slug: req.params.slug });
+        console.log(category);
 
         if (!category) {
             return res.status(404).send('Category was not found');
@@ -87,10 +69,31 @@ const create = async (req, res, next) => {
 };
 
 /**
+ * Get books in category
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const getBooks = async (req, res, next) => {
+    try {
+        const category = await CategoryModel.findOne({ slug: req.params.slug });
+
+        if (!category) {
+            return res.status(404).send('Category was not found');
+        }
+
+        const books = await BookModel.find({ category }).populate('user', '-password -role');
+        return res.json(books);
+    } catch (err) {
+        return next(err);
+    }
+};
+
+/**
  * Routes
  */
-router.get('/slug/:slug', getBySlug);
-router.get('/:id', getById);
+router.get('/:slug/book', getBooks);
+router.get('/:slug', getBySlug);
 router.get('/', getAll);
 router.post('/', create);
 
