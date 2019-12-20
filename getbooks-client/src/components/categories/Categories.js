@@ -10,12 +10,27 @@ export default class Categories extends React.Component {
         const mappedCategories = categories.map(category => (
             <article id={category._id} key={category._id}>
                 <Link to={`/category/${category.slug}`}>
-                    <h2>{category.name}</h2>
+                    <h3>{category.name}</h3>
                 </Link>
             </article>
         ));
 
-        return <>{mappedCategories}</>;
+        return (
+            <>
+                <nav>
+                    <ul>
+                        <li>
+                            <Link to="/login">Log in</Link>
+                        </li>
+                        <li>
+                            <Link to="/add-book">Post a book for sale</Link>
+                        </li>
+                    </ul>
+                </nav>
+                <h2>Categories</h2>
+                {mappedCategories}
+            </>
+        );
     }
 }
 

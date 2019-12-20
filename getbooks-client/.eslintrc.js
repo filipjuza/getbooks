@@ -24,7 +24,7 @@ module.exports = {
         'no-unused-vars': ['warn'],
         'no-underscore-dangle': ['off'],
         'react/prefer-stateless-function': ['off'],
-        'react/jsx-indent': ['warn', 4],
+        'react/jsx-indent': ['off'],
         'react/jsx-indent-props': ['warn', 4],
         'react/jsx-filename-extension': ['off'],
         'jsx-a11y/label-has-associated-control': ['off'],

@@ -120,16 +120,16 @@ const create = async (req, res, next) => {
  * @returns {String} — JWT token
  */
 const authenticate = async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).send('Email or password was not specified');
+    if (!username || !password) {
+        return res.status(400).send('Username or password was not specified');
     }
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ username });
 
     if (!user) {
-        return res.status(404).send('User not found');
+        return res.status(401).send('Invalid credentials');
     }
 
     return bcrypt.compare(password, user.password, (err, success) => {
@@ -156,9 +156,9 @@ const authenticate = async (req, res) => {
 /**
  * Routes
  */
-router.get('/', getAll);
-router.get('/:id', getById);
-router.post('/', create);
 router.post('/authenticate', authenticate);
+router.get('/:id', getById);
+router.get('/', getAll);
+router.post('/', create);
 
 module.exports = router;

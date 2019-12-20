@@ -14,6 +14,7 @@ module.exports = {
     },
     rules: {
         'no-unused-vars': ['warn'],
-        'no-console': 'off'
+        'no-console': 'off',
+        'no-underscore-dangle': ['off']
     }
 };

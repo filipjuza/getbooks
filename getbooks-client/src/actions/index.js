@@ -1,56 +1,126 @@
+import { navigate } from '@reach/router';
+
+import AuthService from '../services/auth.service';
+
 const API_URL = process.env.REACT_APP_API_URL;
 
-export const addKitten = (id, name, slug) => ({
-    type: 'ADD_KITTEN',
+/**
+ * Category actions
+ */
+export const addCategory = (id, name, slug) => ({
+    type: 'ADD_CATEGORY',
     id,
     name,
     slug
 });
 
-export const addHobby = (id, hobby) => ({
-    type: 'ADD_HOBBY',
-    kittenId: id,
-    hobby
+export const replaceCategories = categories => ({
+    type: 'REPLACE_CATEGORIES',
+    categories
 });
 
-export const fetchKittens = () =>
+export const fetchAllCategories = () =>
     async function(dispatch) {
-        const response = await fetch(`${API_URL}/category`);
-        const data = await response.json();
+        const response = await AuthService.fetch(`${API_URL}/category`);
+        const categories = await response.json();
 
-        data.forEach(category => {
-            dispatch(addKitten(category._id, category.name, category.slug));
-        });
+        dispatch(replaceCategories(categories));
     };
 
-export const postKitten = name =>
+export const createCategory = (name, slug) =>
     async function(dispatch) {
-        const response = await fetch(`${API_URL}/kittens`, {
+        const response = await AuthService.fetch(`${API_URL}/category`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json; charset=UTF-8'
             },
             body: JSON.stringify({
-                name
+                name,
+                slug
             })
         });
-        const data = await response.json();
 
-        dispatch(addKitten(data._id, data.name, data.hobbies));
+        const category = await response.json();
+
+        dispatch(addCategory(category._id, category.name, category.slug));
     };
 
-export const postHobby = (kittenId, hobby) =>
+/**
+ * Book actions
+ */
+export const addBook = (id, title, author, price, slug, image, user, category) => ({
+    type: 'ADD_BOOK',
+    id,
+    title,
+    author,
+    price,
+    slug,
+    image,
+    user,
+    category
+});
+
+export const updateBookDetail = book => ({
+    type: 'UPDATE_BOOK_DETAIL',
+    book
+});
+
+export const setBookDetailLoading = isLoading => ({
+    type: 'SET_BOOK_DETAIL_LOADING',
+    isLoading
+});
+
+export const replaceBooks = books => ({
+    type: 'REPLACE_BOOKS',
+    books
+});
+
+export const fetchBooksByCategory = categorySlug =>
     async function(dispatch) {
-        const response = await fetch(`${API_URL}/kittens/${kittenId}/hobbies`, {
+        const response = await AuthService.fetch(`${API_URL}/category/${categorySlug}/book`);
+        const books = await response.json();
+
+        dispatch(replaceBooks(books));
+    };
+
+export const fetchBookBySlug = slug =>
+    async function(dispatch) {
+        dispatch(setBookDetailLoading(true));
+
+        const response = await AuthService.fetch(`${API_URL}/book/${slug}`);
+        const book = await response.json();
+
+        dispatch(updateBookDetail(book));
+    };
+
+export const createBook = book =>
+    async function(dispatch) {
+        await AuthService.fetch(`${API_URL}/book`, {
             method: 'POST',
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8'
-            },
             body: JSON.stringify({
-                hobby
+                ...book
             })
         });
-        const data = await response.json();
 
-        dispatch(addHobby(data._id, hobby));
+        // const newBook = await response.json();
+    };
+
+/**
+ * User actions
+ */
+export const login = (username, password) =>
+    async function(dispatch) {
+        try {
+            await AuthService.login(username, password);
+            // dispatch(addUserCredentials(username));
+            navigate('/'); // Front page
+        } catch (e) {
+            // dispatch(showAndHideAlert('Login Failed', e.message, 'error'));
+        }
+    };
+
+export const logout = () =>
+    async function(dispatch) {
+        AuthService.logout();
+        // dispatch(removeUserCredentials());
     };

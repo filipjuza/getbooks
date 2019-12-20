@@ -13,9 +13,10 @@ const authGuard = (roles = []) => {
     }
 
     return [
-        expressJwt({ JWT_SECRET }),
+        expressJwt({ secret: JWT_SECRET }),
         (req, res, next) => {
             if (permittedRoles.length && !permittedRoles.includes(req.user.role)) {
+                console.log('here m8');
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
