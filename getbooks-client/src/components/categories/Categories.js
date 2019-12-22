@@ -15,18 +15,11 @@ export default class Categories extends React.Component {
             </article>
         ));
 
+        const welcomeMessage = <p>{`Welcome, ${this.props.user.username}.`}</p>;
+
         return (
             <>
-                <nav>
-                    <ul>
-                        <li>
-                            <Link to="/login">Log in</Link>
-                        </li>
-                        <li>
-                            <Link to="/add-book">Post a book for sale</Link>
-                        </li>
-                    </ul>
-                </nav>
+                {this.props.user.username && welcomeMessage}
                 <h2>Categories</h2>
                 {mappedCategories}
             </>
@@ -35,5 +28,6 @@ export default class Categories extends React.Component {
 }
 
 Categories.propTypes = {
-    categories: PropTypes.arrayOf(PropTypes.object).isRequired
+    categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+    user: PropTypes.object.isRequired
 };

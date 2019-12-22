@@ -1,0 +1,32 @@
+.form {
+    .form-field {
+        margin-bottom: 1rem;
+
+        label,
+        input {
+            display: block;
+        }
+
+        label {
+            margin-bottom: 0.25rem;
+        }
+
+        input {
+            border-radius: 3px;
+            font-size: 1rem;
+            height: 2.5rem;
+            padding: 0 0.5rem;
+            width: 100%;
+        }
+    }
+
+    &--invalid {
+        .form-field {
+            color: red;
+
+            input {
+                border-color: red;
+            }
+        }
+    }
+}

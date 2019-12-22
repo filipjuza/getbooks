@@ -29,7 +29,7 @@ module.exports = {
         'react/jsx-filename-extension': ['off'],
         'jsx-a11y/label-has-associated-control': ['off'],
         'func-names': ['off'],
-        // 'react/prop-types': ['off'],
+        'react/forbid-prop-types': ['off'],
         'react/destructuring-assignment': ['off'],
         'import/prefer-default-export': ['off']
     }
