@@ -1,8 +1,6 @@
-import { navigate } from '@reach/router';
+import { Link, navigate } from '@reach/router';
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
-
-import AuthService from '../../services/auth.service';
 
 export default class CreateBook extends Component {
     constructor(props) {
@@ -21,8 +19,13 @@ export default class CreateBook extends Component {
         this.onChange = this.onChange.bind(this);
     }
 
+    componentDidMount() {
+        if (!this.props.user.username) {
+            navigate('/login');
+        }
+    }
+
     onChange(event) {
-        console.log(event.target.name);
         this.setState({
             [event.target.name]: event.target.value
         });
@@ -30,15 +33,13 @@ export default class CreateBook extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.props.createBook({ ...this.state });
-        this.setState({ title: '', author: '', price: '', image: '', category: 'javascript' });
+        this.props.createBook({ ...this.state }).then(() => {
+            navigate(`/book/${this.state.slug}`);
+            this.setState({ title: '', author: '', price: '', image: '', category: 'javascript' });
+        });
     }
 
     render() {
-        if (!AuthService.isLoggedIn()) {
-            navigate('/login');
-        }
-
         const categoryOptions = this.props.categories
             ? this.props.categories.map(category => (
                   <option value={category.slug} key={category.slug}>
@@ -47,7 +48,16 @@ export default class CreateBook extends Component {
               ))
             : '';
 
-        return (
+        const loggedOutState = (
+            <>
+                <p>
+                    <span>You need to </span>
+                    <Link to="/login">log in</Link>
+                    <span> first.</span>
+                </p>
+            </>
+        );
+        const loggedInState = (
             <>
                 <h1>Post a book for sale</h1>
                 <form className="form" onSubmit={this.handleSubmit}>
@@ -142,10 +152,13 @@ export default class CreateBook extends Component {
                 </form>
             </>
         );
+
+        return this.props.user.username ? loggedInState : loggedOutState;
     }
 }
 
 CreateBook.propTypes = {
     categories: PropTypes.arrayOf(PropTypes.object).isRequired,
-    createBook: PropTypes.func.isRequired
+    createBook: PropTypes.func.isRequired,
+    user: PropTypes.object
 };

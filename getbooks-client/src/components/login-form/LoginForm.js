@@ -1,3 +1,6 @@
+import './LoginForm.scss';
+
+import { navigate } from '@reach/router';
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
 
@@ -7,7 +10,8 @@ export default class LoginForm extends Component {
 
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            formInvalid: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -21,15 +25,22 @@ export default class LoginForm extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.props.login(this.state.username, this.state.password);
-        this.setState({ username: '', password: '' });
+        this.props
+            .login(this.state.username, this.state.password)
+            .then(() => {
+                navigate('/');
+                this.setState({ username: '', password: '' });
+            })
+            .catch(() => {
+                this.setState({ password: '', formInvalid: true });
+            });
     }
 
     render() {
         return (
             <>
-                <h1>Login</h1>
-                <form className="form" onSubmit={this.handleSubmit}>
+                <h1>Log in</h1>
+                <form className={`form ${this.state.formInvalid ? 'form--invalid' : ''}`} onSubmit={this.handleSubmit}>
                     <div className="form-field">
                         <label className="label" htmlFor="username">
                             Username

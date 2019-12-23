@@ -48,7 +48,20 @@ function bookDetail(state = { isLoading: true }, action) {
         case 'SET_BOOK_DETAIL_LOADING': {
             return { ...state, isLoading: action.isLoading };
         }
+        default: {
+            return state;
+        }
+    }
+}
 
+function user(state = {}, action) {
+    switch (action.type) {
+        case 'UPDATE_USER_CREDENTIALS': {
+            return { ...state, username: action.username };
+        }
+        case 'REMOVE_USER_CREDENTIALS': {
+            return {};
+        }
         default: {
             return state;
         }
@@ -58,5 +71,6 @@ function bookDetail(state = { isLoading: true }, action) {
 export default combineReducers({
     categories,
     books,
-    bookDetail
+    bookDetail,
+    user
 });

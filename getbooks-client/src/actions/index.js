@@ -1,12 +1,10 @@
-import { navigate } from '@reach/router';
-
 import AuthService from '../services/auth.service';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-/**
+/** *************************************************
  * Category actions
- */
+ ************************************************* */
 export const addCategory = (id, name, slug) => ({
     type: 'ADD_CATEGORY',
     id,
@@ -19,35 +17,29 @@ export const replaceCategories = categories => ({
     categories
 });
 
-export const fetchAllCategories = () =>
-    async function(dispatch) {
-        const response = await AuthService.fetch(`${API_URL}/category`);
-        const categories = await response.json();
-
-        dispatch(replaceCategories(categories));
+export const fetchCategories = () =>
+    function(dispatch) {
+        return AuthService.fetch(`${API_URL}/category`)
+            .then(res => res.json())
+            .then(categories => dispatch(replaceCategories(categories)));
     };
 
 export const createCategory = (name, slug) =>
-    async function(dispatch) {
-        const response = await AuthService.fetch(`${API_URL}/category`, {
+    function(dispatch) {
+        return AuthService.fetch(`${API_URL}/category`, {
             method: 'POST',
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8'
-            },
             body: JSON.stringify({
                 name,
                 slug
             })
-        });
-
-        const category = await response.json();
-
-        dispatch(addCategory(category._id, category.name, category.slug));
+        })
+            .then(res => res.json())
+            .then(category => dispatch(addCategory(category._id, category.name, category.slug)));
     };
 
-/**
+/** *************************************************
  * Book actions
- */
+ ************************************************* */
 export const addBook = (id, title, author, price, slug, image, user, category) => ({
     type: 'ADD_BOOK',
     id,
@@ -60,6 +52,11 @@ export const addBook = (id, title, author, price, slug, image, user, category) =
     category
 });
 
+export const replaceBooks = books => ({
+    type: 'REPLACE_BOOKS',
+    books
+});
+
 export const updateBookDetail = book => ({
     type: 'UPDATE_BOOK_DETAIL',
     book
@@ -70,57 +67,53 @@ export const setBookDetailLoading = isLoading => ({
     isLoading
 });
 
-export const replaceBooks = books => ({
-    type: 'REPLACE_BOOKS',
-    books
-});
-
-export const fetchBooksByCategory = categorySlug =>
-    async function(dispatch) {
-        const response = await AuthService.fetch(`${API_URL}/category/${categorySlug}/book`);
-        const books = await response.json();
-
-        dispatch(replaceBooks(books));
+export const fetchBooks = categorySlug =>
+    function(dispatch) {
+        return AuthService.fetch(`${API_URL}/category/${categorySlug}/book`)
+            .then(res => res.json())
+            .then(books => dispatch(replaceBooks(books)));
     };
 
-export const fetchBookBySlug = slug =>
-    async function(dispatch) {
+export const fetchBook = slug =>
+    function(dispatch) {
         dispatch(setBookDetailLoading(true));
 
-        const response = await AuthService.fetch(`${API_URL}/book/${slug}`);
-        const book = await response.json();
-
-        dispatch(updateBookDetail(book));
+        return AuthService.fetch(`${API_URL}/book/${slug}`)
+            .then(res => res.json())
+            .then(book => dispatch(updateBookDetail(book)))
+            .finally(() => dispatch(setBookDetailLoading(false)));
     };
 
 export const createBook = book =>
-    async function(dispatch) {
-        await AuthService.fetch(`${API_URL}/book`, {
+    function(dispatch) {
+        return AuthService.fetch(`${API_URL}/book`, {
             method: 'POST',
             body: JSON.stringify({
                 ...book
             })
         });
-
-        // const newBook = await response.json();
     };
 
-/**
+/** *************************************************
  * User actions
- */
+ ************************************************* */
+export const updateUserCredentials = username => ({
+    type: 'UPDATE_USER_CREDENTIALS',
+    username
+});
+
+export const removeUserCredentials = () => ({
+    type: 'REMOVE_USER_CREDENTIALS'
+});
+
 export const login = (username, password) =>
-    async function(dispatch) {
-        try {
-            await AuthService.login(username, password);
-            // dispatch(addUserCredentials(username));
-            navigate('/'); // Front page
-        } catch (e) {
-            // dispatch(showAndHideAlert('Login Failed', e.message, 'error'));
-        }
+    function(dispatch) {
+        return AuthService.login(username, password).then(token => dispatch(updateUserCredentials(username)));
     };
 
 export const logout = () =>
-    async function(dispatch) {
+    function(dispatch) {
         AuthService.logout();
-        // dispatch(removeUserCredentials());
+
+        return dispatch(removeUserCredentials());
     };

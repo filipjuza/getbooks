@@ -52,21 +52,21 @@ class AuthService {
      * @param password
      * @returns {String} — JWT token
      */
-    async login(username, password) {
-        const res = await this.fetch(`${this.API_URL}/user/authenticate`, {
+    login(username, password) {
+        return this.fetch(`${this.API_URL}/user/authenticate`, {
             method: 'POST',
             body: JSON.stringify({
                 username,
                 password
             })
-        });
+        })
+            .then(res => res.json())
+            .then(res => {
+                this.setToken(res.token);
+                this.setUsername(username);
 
-        const { token } = await res.json();
-
-        this.setToken(token);
-        this.setUsername(username);
-
-        return token;
+                return res.token;
+            });
     }
 
     /**
@@ -114,7 +114,19 @@ class AuthService {
         return fetch(url, {
             headers,
             ...options
-        });
+        }).then(AuthService.handleError);
+    }
+
+    static handleError(response) {
+        if (!response.ok) {
+            console.log('handleError not ok');
+            console.log(response);
+
+            // TODO: Display snackbar here
+            throw new Error(response.statusText);
+        }
+
+        return response;
     }
 }
 
