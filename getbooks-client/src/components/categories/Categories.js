@@ -5,15 +5,18 @@ import React from 'react';
 
 export default class Categories extends React.Component {
     render() {
-        const { categories } = this.props;
+        const { isLoading, categories } = this.props.categories;
+        let categoriesTemplate = <p>Loading...</p>;
 
-        const mappedCategories = categories.map(category => (
-            <article id={category._id} key={category._id}>
-                <Link to={`/category/${category.slug}`}>
-                    <h3>{category.name}</h3>
-                </Link>
-            </article>
-        ));
+        if (!isLoading && categories) {
+            categoriesTemplate = categories.map(category => (
+                <article id={category._id} key={category._id}>
+                    <Link to={`/category/${category.slug}`}>
+                        <h3>{category.name}</h3>
+                    </Link>
+                </article>
+            ));
+        }
 
         const welcomeMessage = <p>{`Welcome, ${this.props.user.username}.`}</p>;
 
@@ -21,13 +24,13 @@ export default class Categories extends React.Component {
             <>
                 {this.props.user.username && welcomeMessage}
                 <h2>Categories</h2>
-                {mappedCategories}
+                {categoriesTemplate}
             </>
         );
     }
 }
 
 Categories.propTypes = {
-    categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+    categories: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired
 };

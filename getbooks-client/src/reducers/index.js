@@ -1,12 +1,18 @@
 import { combineReducers } from 'redux';
 
-function categories(state = [], action) {
+function categories(state = { isLoading: false, categories: [] }, action) {
     switch (action.type) {
         case 'ADD_CATEGORY': {
-            return [...state, { _id: action.id, name: action.name, slug: action.slug }];
+            return {
+                ...state,
+                categories: [...state.categories, { _id: action.id, name: action.name, slug: action.slug }]
+            };
+        }
+        case 'SET_CATEGORIES_LOADING': {
+            return { ...state, isLoading: action.isLoading };
         }
         case 'REPLACE_CATEGORIES': {
-            return [...action.categories];
+            return { ...state, categories: action.categories };
         }
         default: {
             return state;
@@ -14,25 +20,31 @@ function categories(state = [], action) {
     }
 }
 
-function books(state = [], action) {
+function books(state = { isLoading: false, books: [] }, action) {
     switch (action.type) {
         case 'ADD_BOOK': {
-            return [
+            return {
                 ...state,
-                {
-                    _id: action.id,
-                    title: action.title,
-                    author: action.author,
-                    price: action.price,
-                    slug: action.slug,
-                    image: action.image,
-                    user: action.user,
-                    category: action.category
-                }
-            ];
+                books: [
+                    ...state.books,
+                    {
+                        _id: action.id,
+                        title: action.title,
+                        author: action.author,
+                        price: action.price,
+                        slug: action.slug,
+                        image: action.image,
+                        user: action.user,
+                        category: action.category
+                    }
+                ]
+            };
         }
         case 'REPLACE_BOOKS': {
-            return [...action.books];
+            return { ...state, books: action.books };
+        }
+        case 'SET_BOOKS_LOADING': {
+            return { ...state, isLoading: action.isLoading };
         }
         default: {
             return state;

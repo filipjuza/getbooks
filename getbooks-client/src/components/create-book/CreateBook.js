@@ -40,8 +40,9 @@ export default class CreateBook extends Component {
     }
 
     render() {
-        const categoryOptions = this.props.categories
-            ? this.props.categories.map(category => (
+        const { categories } = this.props.categories;
+        const categoryOptions = categories
+            ? categories.map(category => (
                   <option value={category.slug} key={category.slug}>
                       {category.name}
                   </option>
@@ -158,7 +159,7 @@ export default class CreateBook extends Component {
 }
 
 CreateBook.propTypes = {
-    categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+    categories: PropTypes.object.isRequired,
     createBook: PropTypes.func.isRequired,
-    user: PropTypes.object
+    user: PropTypes.object.isRequired
 };

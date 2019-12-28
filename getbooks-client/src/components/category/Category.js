@@ -8,20 +8,28 @@ export default class Category extends React.Component {
     }
 
     render() {
-        const { books, categories, slug } = this.props;
-        const category = categories.find(c => c.slug === slug);
-        const mappedBooks = books.map(book => (
-            <article id={book._id} key={book._id}>
-                <Link to={`/book/${book.slug}`}>
-                    <h3>{book.title}</h3>
-                </Link>
-            </article>
-        ));
+        const { slug } = this.props;
+        const { categories } = this.props.categories;
+        const { isLoading, books } = this.props.books;
+        let category = null;
+        let bookList = <p>Laoding...</p>;
+
+        if (!isLoading && categories) {
+            category = categories.find(c => c.slug === slug);
+
+            bookList = books.map(book => (
+                <article id={book._id} key={book._id}>
+                    <Link to={`/book/${book.slug}`}>
+                        <h3>{book.title}</h3>
+                    </Link>
+                </article>
+            ));
+        }
 
         return (
             <>
-                <h2>{category ? category.name : ''}</h2>
-                {mappedBooks}
+                <h2>{category ? category.name : '...'}</h2>
+                {bookList}
             </>
         );
     }
@@ -29,8 +37,8 @@ export default class Category extends React.Component {
 
 Category.propTypes = {
     slug: PropTypes.string,
-    books: PropTypes.arrayOf(PropTypes.object).isRequired,
-    categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+    books: PropTypes.object.isRequired,
+    categories: PropTypes.object.isRequired,
     fetchBooks: PropTypes.func.isRequired
 };
 
