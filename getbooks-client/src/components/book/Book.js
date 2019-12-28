@@ -11,7 +11,7 @@ export default class Book extends React.Component {
 
     render() {
         const { isLoading, book } = this.props.bookDetail;
-        let bookTemplate = 'Loading...';
+        let bookTemplate = <p>Loading...</p>;
 
         if (!isLoading && book) {
             bookTemplate = (

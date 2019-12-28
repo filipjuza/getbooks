@@ -2,6 +2,7 @@
 import './App.scss';
 
 import { Router } from '@reach/router';
+import jwt_decode from 'jwt-decode';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -16,6 +17,7 @@ import {
     updateUserCredentials,
 } from '../../actions';
 import AuthService from '../../services/auth.service';
+import Admin from '../admin/Admin';
 import Book from '../book/Book';
 import Categories from '../categories/Categories';
 import Category from '../category/Category';
@@ -34,7 +36,10 @@ class App extends Component {
         await this.props.fetchCategories();
 
         if (AuthService.isLoggedIn()) {
-            this.props.updateUserCredentials(AuthService.getUsername());
+            const token = AuthService.getToken();
+            const { role } = jwt_decode(token);
+
+            this.props.updateUserCredentials(AuthService.getUsername(), role);
         }
     }
 
@@ -64,6 +69,12 @@ class App extends Component {
                         user={this.props.user}
                     />
                     <LoginForm path="/login" login={(username, password) => this.props.login(username, password)} />
+                    <Admin
+                        path="/admin"
+                        categories={this.props.categories}
+                        user={this.props.user}
+                        createCategory={(name, slug) => this.props.createCategory(name, slug)}
+                    />
                 </Router>
             </>
         );
@@ -85,7 +96,7 @@ const mapDispatchToProps = dispatch => ({
     createBook: book => dispatch(createBook(book)),
     login: (username, password) => dispatch(login(username, password)),
     logout: () => dispatch(logout()),
-    updateUserCredentials: username => dispatch(updateUserCredentials(username))
+    updateUserCredentials: (username, role) => dispatch(updateUserCredentials(username, role))
 });
 
 export default connect(mapStatetoProps, mapDispatchToProps)(App);

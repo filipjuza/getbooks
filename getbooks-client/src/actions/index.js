@@ -1,3 +1,5 @@
+import jwt_decode from 'jwt-decode';
+
 import AuthService from '../services/auth.service';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -17,11 +19,19 @@ export const replaceCategories = categories => ({
     categories
 });
 
+export const setCategoriesLoading = isLoading => ({
+    type: 'SET_CATEGORIES_LOADING',
+    isLoading
+});
+
 export const fetchCategories = () =>
     function(dispatch) {
+        dispatch(setCategoriesLoading(true));
+
         return AuthService.fetch(`${API_URL}/category`)
             .then(res => res.json())
-            .then(categories => dispatch(replaceCategories(categories)));
+            .then(categories => dispatch(replaceCategories(categories)))
+            .finally(() => dispatch(setCategoriesLoading(false)));
     };
 
 export const createCategory = (name, slug) =>
@@ -62,6 +72,11 @@ export const updateBookDetail = book => ({
     book
 });
 
+export const setBooksLoading = isLoading => ({
+    type: 'SET_BOOKS_LOADING',
+    isLoading
+});
+
 export const setBookDetailLoading = isLoading => ({
     type: 'SET_BOOK_DETAIL_LOADING',
     isLoading
@@ -69,9 +84,12 @@ export const setBookDetailLoading = isLoading => ({
 
 export const fetchBooks = categorySlug =>
     function(dispatch) {
+        dispatch(setBooksLoading(true));
+
         return AuthService.fetch(`${API_URL}/category/${categorySlug}/book`)
             .then(res => res.json())
-            .then(books => dispatch(replaceBooks(books)));
+            .then(books => dispatch(replaceBooks(books)))
+            .finally(() => dispatch(setBooksLoading(false)));
     };
 
 export const fetchBook = slug =>
@@ -97,9 +115,10 @@ export const createBook = book =>
 /** *************************************************
  * User actions
  ************************************************* */
-export const updateUserCredentials = username => ({
+export const updateUserCredentials = (username, role = AuthService.Role.User) => ({
     type: 'UPDATE_USER_CREDENTIALS',
-    username
+    username,
+    role
 });
 
 export const removeUserCredentials = () => ({
@@ -108,7 +127,11 @@ export const removeUserCredentials = () => ({
 
 export const login = (username, password) =>
     function(dispatch) {
-        return AuthService.login(username, password).then(token => dispatch(updateUserCredentials(username)));
+        return AuthService.login(username, password).then(token => {
+            const { role } = jwt_decode(token);
+
+            dispatch(updateUserCredentials(username, role));
+        });
     };
 
 export const logout = () =>

@@ -1,3 +1,5 @@
+import ApiError from './ApiError';
+
 /**
  * Inspired by qa-site from https://github.com/kdorland?tab=repositories
  */
@@ -7,6 +9,10 @@ class AuthService {
         this.LS_TOKEN_KEY = 'jwt-token';
         this.LS_USERNAME_KEY = 'username';
         this.LS_USER_ID_KEY = 'user-id';
+        this.Role = {
+            User: 'user',
+            Admin: 'admin'
+        };
     }
 
     /**
@@ -119,11 +125,8 @@ class AuthService {
 
     static handleError(response) {
         if (!response.ok) {
-            console.log('handleError not ok');
-            console.log(response);
-
             // TODO: Display snackbar here
-            throw new Error(response.statusText);
+            throw new ApiError(response.statusText, response);
         }
 
         return response;

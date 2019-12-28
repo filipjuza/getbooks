@@ -6,6 +6,7 @@
  */
 const errorHandler = (err, req, res, next) => {
     console.log('***** Error handler kicked in *****');
+    console.log(err);
 
     /**
      * CastErrors (ObjectID in an incorrect format) are handled as 404's
@@ -15,7 +16,6 @@ const errorHandler = (err, req, res, next) => {
     }
 
     if (err.name === 'UnauthorizedError') {
-        console.log(err);
         return res.status(401).json({ message: 'Invalid token' });
     }
 

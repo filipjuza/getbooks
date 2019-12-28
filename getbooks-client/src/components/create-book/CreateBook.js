@@ -19,12 +19,6 @@ export default class CreateBook extends Component {
         this.onChange = this.onChange.bind(this);
     }
 
-    componentDidMount() {
-        if (!this.props.user.username) {
-            navigate('/login');
-        }
-    }
-
     onChange(event) {
         this.setState({
             [event.target.name]: event.target.value
@@ -40,8 +34,9 @@ export default class CreateBook extends Component {
     }
 
     render() {
-        const categoryOptions = this.props.categories
-            ? this.props.categories.map(category => (
+        const { categories } = this.props.categories;
+        const categoryOptions = categories
+            ? categories.map(category => (
                   <option value={category.slug} key={category.slug}>
                       {category.name}
                   </option>
@@ -153,12 +148,18 @@ export default class CreateBook extends Component {
             </>
         );
 
-        return this.props.user.username ? loggedInState : loggedOutState;
+        if (!this.props.user.username) {
+            navigate('/');
+
+            return loggedOutState;
+        }
+
+        return loggedInState;
     }
 }
 
 CreateBook.propTypes = {
-    categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+    categories: PropTypes.object.isRequired,
     createBook: PropTypes.func.isRequired,
-    user: PropTypes.object
+    user: PropTypes.object.isRequired
 };
