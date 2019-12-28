@@ -117,10 +117,6 @@ export default class Admin extends Component {
             </>
         );
 
-        if (this.props.user.role === undefined) {
-            return <p>Loading...</p>;
-        }
-
         if (this.props.user.role !== AuthService.Role.Admin) {
             return restrictedState;
         }
