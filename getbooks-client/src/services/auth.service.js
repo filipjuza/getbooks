@@ -7,6 +7,10 @@ class AuthService {
         this.LS_TOKEN_KEY = 'jwt-token';
         this.LS_USERNAME_KEY = 'username';
         this.LS_USER_ID_KEY = 'user-id';
+        this.Role = {
+            User: 'user',
+            Admin: 'admin'
+        };
     }
 
     /**

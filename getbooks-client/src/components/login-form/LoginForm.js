@@ -31,7 +31,8 @@ export default class LoginForm extends Component {
                 navigate('/');
                 this.setState({ username: '', password: '' });
             })
-            .catch(() => {
+            .catch(e => {
+                console.error(e);
                 this.setState({ password: '', formInvalid: true });
             });
     }

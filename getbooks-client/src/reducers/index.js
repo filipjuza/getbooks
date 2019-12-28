@@ -69,7 +69,7 @@ function bookDetail(state = { isLoading: true }, action) {
 function user(state = {}, action) {
     switch (action.type) {
         case 'UPDATE_USER_CREDENTIALS': {
-            return { ...state, username: action.username };
+            return { ...state, username: action.username, role: action.role };
         }
         case 'REMOVE_USER_CREDENTIALS': {
             return {};

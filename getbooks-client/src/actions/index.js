@@ -1,3 +1,5 @@
+import jwt_decode from 'jwt-decode';
+
 import AuthService from '../services/auth.service';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -113,9 +115,10 @@ export const createBook = book =>
 /** *************************************************
  * User actions
  ************************************************* */
-export const updateUserCredentials = username => ({
+export const updateUserCredentials = (username, role = AuthService.Role.User) => ({
     type: 'UPDATE_USER_CREDENTIALS',
-    username
+    username,
+    role
 });
 
 export const removeUserCredentials = () => ({
@@ -124,7 +127,11 @@ export const removeUserCredentials = () => ({
 
 export const login = (username, password) =>
     function(dispatch) {
-        return AuthService.login(username, password).then(token => dispatch(updateUserCredentials(username)));
+        return AuthService.login(username, password).then(token => {
+            const { role } = jwt_decode(token);
+
+            dispatch(updateUserCredentials(username, role));
+        });
     };
 
 export const logout = () =>

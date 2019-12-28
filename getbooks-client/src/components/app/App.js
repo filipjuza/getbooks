@@ -16,6 +16,7 @@ import {
     updateUserCredentials,
 } from '../../actions';
 import AuthService from '../../services/auth.service';
+import Admin from '../admin/Admin';
 import Book from '../book/Book';
 import Categories from '../categories/Categories';
 import Category from '../category/Category';
@@ -64,6 +65,7 @@ class App extends Component {
                         user={this.props.user}
                     />
                     <LoginForm path="/login" login={(username, password) => this.props.login(username, password)} />
+                    <Admin path="/admin" categories={this.props.categories} user={this.props.user} />
                 </Router>
             </>
         );
