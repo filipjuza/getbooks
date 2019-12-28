@@ -1,28 +1,21 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Link, navigate } from '@reach/router';
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
+
+import AuthService from '../../services/auth.service';
 
 export default class Admin extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            title: '',
-            author: '',
-            price: '',
+            name: '',
             slug: '',
-            // TODO: Get default value from available categories
-            category: 'javascript',
-            image: ''
+            slugInvalid: false
         };
-        // this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
-    }
-
-    componentDidMount() {
-        if (!this.props.user.username) {
-            navigate('/login');
-        }
     }
 
     onChange(event) {
@@ -31,23 +24,27 @@ export default class Admin extends Component {
         });
     }
 
-    // handleSubmit(event) {
-    //     event.preventDefault();
-    //     this.props.createBook({ ...this.state }).then(() => {
-    //         navigate(`/book/${this.state.slug}`);
-    //         this.setState({ title: '', author: '', price: '', image: '', category: 'javascript' });
-    //     });
-    // }
+    handleSubmit(event) {
+        event.preventDefault();
+        this.props
+            .createCategory(this.state.name, this.state.slug)
+            .then(() => {
+                this.setState({ name: '', slug: '' });
+            })
+            .catch(err => {
+                const { response } = err;
+
+                if (response.status === 400) {
+                    this.setState((state, props) => ({
+                        ...state,
+                        slugInvalid: true
+                    }));
+                }
+            });
+    }
 
     render() {
         const { categories } = this.props.categories;
-        const categoryOptions = categories
-            ? categories.map(category => (
-                  <option value={category.slug} key={category.slug}>
-                      {category.name}
-                  </option>
-              ))
-            : '';
 
         const loggedOutState = (
             <>
@@ -58,53 +55,44 @@ export default class Admin extends Component {
                 </p>
             </>
         );
+
+        const restrictedState = (
+            <>
+                <p>You don't have enough permissions to access this page.</p>
+                <Link to="/">Browse categories</Link>
+            </>
+        );
+
+        const categoryList = (
+            <>
+                <ul>
+                    {categories.map(category => {
+                        return <li key={category._id}>{`${category.name} (${category.slug})`}</li>;
+                    })}
+                </ul>
+            </>
+        );
+
         const loggedInState = (
             <>
-                <h1>Post a book for sale</h1>
-                <form className="form">
+                <h1>Admin</h1>
+                <h2>Add New Category</h2>
+                <form className="form" onSubmit={this.handleSubmit}>
                     <div className="form-field">
-                        <label className="label" htmlFor="title">
-                            Title
+                        <label className="label" htmlFor="name">
+                            Name
                         </label>
                         <input
                             onChange={this.onChange}
-                            value={this.state.title}
+                            value={this.state.name}
                             type="text"
-                            name="title"
-                            id="title"
-                            placeholder="The art of hygge"
+                            name="name"
+                            id="name"
+                            placeholder="Interaction Design"
                             required
                         />
                     </div>
-                    <div className="form-field">
-                        <label className="label" htmlFor="author">
-                            Author
-                        </label>
-                        <input
-                            onChange={this.onChange}
-                            value={this.state.author}
-                            type="text"
-                            name="author"
-                            id="author"
-                            placeholder="Albert Camus"
-                            required
-                        />
-                    </div>
-                    <div className="form-field">
-                        <label className="label" htmlFor="price">
-                            Price
-                        </label>
-                        <input
-                            onChange={this.onChange}
-                            value={this.state.price}
-                            type="number"
-                            name="price"
-                            id="price"
-                            placeholder="399"
-                            required
-                        />
-                    </div>
-                    <div className="form-field">
+                    <div className={`form-field ${this.state.slugInvalid ? 'form-field--invalid' : ''}`}>
                         <label className="label" htmlFor="slug">
                             Slug (url friendly name)
                         </label>
@@ -114,51 +102,41 @@ export default class Admin extends Component {
                             type="text"
                             name="slug"
                             id="slug"
-                            placeholder="the-serenity-of-suffering-399"
+                            placeholder="interaction-design"
                             required
                         />
-                    </div>
-                    <div className="form-field">
-                        <label className="label" htmlFor="image">
-                            Image
-                        </label>
-                        <input
-                            onChange={this.onChange}
-                            value={this.state.image}
-                            type="url"
-                            name="image"
-                            id="image"
-                            placeholder="Image URL"
-                        />
-                    </div>
-                    <div className="form-field">
-                        <label className="label" htmlFor="category">
-                            Category
-                        </label>
-                        <select
-                            onChange={this.onChange}
-                            value={this.state.category}
-                            type="url"
-                            name="category"
-                            id="category"
-                            required
-                        >
-                            {categoryOptions}
-                        </select>
                     </div>
 
                     <button className="button" type="submit" id="submit">
-                        Post book
+                        Add Category
                     </button>
                 </form>
+
+                <h2>Categories</h2>
+                {categoryList}
             </>
         );
 
-        return this.props.user.username ? loggedInState : loggedOutState;
+        if (this.props.user.role === undefined) {
+            return <p>Loading...</p>;
+        }
+
+        if (this.props.user.role !== AuthService.Role.Admin) {
+            return restrictedState;
+        }
+
+        if (!this.props.user.username) {
+            navigate('/login');
+
+            return loggedOutState;
+        }
+
+        return loggedInState;
     }
 }
 
 Admin.propTypes = {
     categories: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    createCategory: PropTypes.func.isRequired
 };

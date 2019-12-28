@@ -19,12 +19,6 @@ export default class CreateBook extends Component {
         this.onChange = this.onChange.bind(this);
     }
 
-    componentDidMount() {
-        if (!this.props.user.username) {
-            navigate('/login');
-        }
-    }
-
     onChange(event) {
         this.setState({
             [event.target.name]: event.target.value
@@ -154,7 +148,13 @@ export default class CreateBook extends Component {
             </>
         );
 
-        return this.props.user.username ? loggedInState : loggedOutState;
+        if (!this.props.user.username) {
+            navigate('/');
+
+            return loggedOutState;
+        }
+
+        return loggedInState;
     }
 }
 
